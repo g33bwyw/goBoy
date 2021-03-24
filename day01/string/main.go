@@ -1,86 +1,20 @@
-# VScode安装
-
-```
-ctrl + shift + P
-输入 go:install/update tools 安装go相关的提示包
-
-设置自动保存
-
-设置snippets
-{
-    "println":{
-    "prefix": "pln",
-    "body":"fmt.Println($0)",
-    "description": "println"
-    },
-    "printf":{
-    "prefix": "plf",
-    "body": "fmt.Printf(\"$0\")",
-    "description": "printf"
-    }
-}
-
-
-```
-
-
-
-#  常量
-
-const 关键词
-
-iota使用：遇到const变为0,每增加一行值+1，iota初始值为0
-
-``` 
-1.初始化多个值
-const (
-	a = 100
-	b
-	c
-)
-结果： 100， 100， 100
-
-2.iota用法
-const (
-	a = iota
-	_
-	b = iota
-	c = 100
-	g
-	d = iota
-	e
-	f
-)
-结果：a = 0, b=2,c=100,g=100,d=5,e=6,f=7
-```
-
-
-
-# 基础运算符
-
-``` 
-/**
-	在一个数组中存在唯一一个数字的值，其他数字个数全都是偶数
-**/
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+func statChineseTotal(s string) int {
+	a1 := len(s)
+	a2 := len([]rune(s))
+	return (a1-a2)/2
 
-func main() {
-	var a []int = []int{3, 3, 9, 8, 7, 9, 8}
-	var num int
-	for i := 0; i < len(a); i++ {
-		num ^= a[i]
-	}
-	fmt.Println(num)
 }
-```
 
-
-
-#  字符串相关
-
-``` 
+/**
+字符串的相关使用
+ */
+func main() {
 	var str string = "hello word china 中国"
 	//打印字符串长度
 	fmt.Println(len(str))
@@ -121,5 +55,5 @@ func main() {
 	strArr2[0] = 'T'
 	fmt.Println(string(strArr2))
 
-```
-
+	fmt.Println("中文字数:",statChineseTotal("hello沙河小王子"))
+}

@@ -24,7 +24,10 @@ func doSing(s Singer) {
 	s.say()
 }
 func main() {
+	var i Singer
 	p1 := Child{}
+	i = p1
+	i.say()
 	doSing(p1)
 	p2 := Work{}
 	doSing(p2)

@@ -1,26 +1,43 @@
 package mylog
 
 import (
-	fmt "fmt"
+	"fmt"
 	"time"
 )
 
 type consoleLog struct {
-	MyLog
+	lv  logLevel
+	dlv logLevel
 }
 
-func (c *consoleLog) NewConsoleLog(level string) *consoleLog {
+func NewConsoleLog(defaultLevel string) *consoleLog {
+	dlv := parseStringToLogLevel(defaultLevel)
 	return &consoleLog{
-		MyLog{
-			logLevel: parseStringToLogLevel(level),
-		},
+		dlv: dlv,
 	}
 }
 
 //格式化日志
-func (c *consoleLog) FormatLog(fomate string, arg ...interface{}) {
-	funcName, fileName, line := getInfo(2)
-	msg := fmt.Sprintf(fomate, arg)
-	fmt.Printf("[%s][%s][%s-%s:%d]:%s", time.Now().Format("2016-01-02 15:04:05"),
-		c.MyLog.logLevel, funcName, fileName, line, msg)
+func (c *consoleLog) log(str string, arg ...interface{}) {
+	if c.lv >= c.dlv {
+		funcName, fileName, line := getInfo(3)
+		msg := fmt.Sprintf(str, arg...)
+		fmt.Printf("[%s] [%s] [%s:%s:%d] %s\n", time.Now().Format("2006-01-02 15:04:05"),
+			parseLogLevelToString(c.lv), funcName, fileName, line, msg)
+	}
+}
+
+func (c *consoleLog) Info(str string, arg ...interface{}) {
+	c.lv = INFO
+	c.log(str, arg...)
+}
+
+func (c *consoleLog) Warn(str string, arg ...interface{}) {
+	c.lv = WARN
+	c.log(str, arg...)
+}
+
+func (c *consoleLog) Error(str string, arg ...interface{}) {
+	c.lv = ERROR
+	c.log(str, arg...)
 }

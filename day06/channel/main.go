@@ -14,9 +14,10 @@ var wg sync.WaitGroup
 func makeSeedNum(jobChan chan int64) {
 	defer wg.Done()
 	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
 		jobChan <- rand.Int63n(100000)
 	}
+	close(jobChan)
 	return
 }
 func sumSeedNum(seedNum int64, resultChan chan string) {
@@ -32,21 +33,20 @@ func sumSeedNum(seedNum int64, resultChan chan string) {
 }
 
 func main() {
-	jobChan := make(chan int64, 10)
-	resultChan := make(chan string, 10)
+	jobChan := make(chan int64, 20)
+	resultChan := make(chan string, 20)
 	wg.Add(25)
 	go makeSeedNum(jobChan)
 	for i := 0; i < 24; i++ {
 		go func() {
 			defer wg.Done()
-			seedNum, ok := <-jobChan
-			if ok {
+			for seedNum := range jobChan {
 				sumSeedNum(seedNum, resultChan)
 			}
 		}()
 	}
-	close(jobChan)
-	//close(resultChan)
+	wg.Wait()
+	close(resultChan)
 	for {
 		r, ok := <-resultChan
 		if !ok {
@@ -54,5 +54,10 @@ func main() {
 		}
 		fmt.Println(r)
 	}
-	wg.Wait()
+
+	//次写法打印出来的是字符串
+	//for _,v := range <-resultChan{
+	//	fmt.Println(string(v))
+	//}
+
 }

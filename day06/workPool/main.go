@@ -22,8 +22,8 @@ func worker(id int, jobs <-chan int, results chan<- int) {
 var s []int
 
 func main() {
-	jobs := make(chan int, 100)
-	results := make(chan int, 100)
+	jobs := make(chan int)
+	results := make(chan int)
 
 	wg.Add(13)
 	// 开启3个goroutine

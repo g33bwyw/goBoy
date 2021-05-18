@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 /**
@@ -17,6 +18,8 @@ func Encode(message string) ([]byte, error) {
 	strLen := int32(len(message))
 	//2.创造字节缓冲
 	buf := new(bytes.Buffer)
+	fmt.Println("---------")
+	fmt.Println(buf)
 	//3.将长度放入到小端中
 	sizeErr := binary.Write(buf, binary.LittleEndian, strLen)
 	if sizeErr != nil {

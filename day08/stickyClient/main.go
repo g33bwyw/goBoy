@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"goBoy/day08/proto"
 	"net"
+	"time"
 )
 
 func main() {
@@ -16,8 +17,12 @@ func main() {
 	for i := 0; i < 20; i++ {
 		message := "Hello, Hello. How are you?"
 		//conn.Write([]byte(message))
-		buf, _ := proto.Encode(message)
+		buf, err := proto.Encode(message)
+		if err != nil {
+			fmt.Println("encode msg failed, err:", err)
+			return
+		}
 		conn.Write(buf)
 	}
-
+	time.Sleep(time.Second * 60)
 }

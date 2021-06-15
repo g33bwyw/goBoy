@@ -26,7 +26,7 @@ func process(conn net.Conn) {
 }
 
 func main() {
-	listen, err := net.Listen("tcp", "127.0.0.1:80") //监听端口
+	listen, err := net.Listen("tcp", "127.0.0.1:3000") //监听端口
 	if err != nil {
 		fmt.Println("server error:", err)
 		return

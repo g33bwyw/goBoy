@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"goBoy/day08/proto"
+	"io"
 	"net"
 )
 
@@ -28,7 +29,14 @@ func process(conn net.Conn) {
 		//	break
 		//}
 		//receiveStr := string(buf[:n])
-		receiveStr, _ := proto.Decode(reader)
+		receiveStr, err := proto.Decode(reader)
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			fmt.Println("decode msg failed, err:", err)
+			return
+		}
 		fmt.Println("收到client发来的数据：", receiveStr)
 	}
 }

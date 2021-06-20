@@ -20,7 +20,8 @@ func (u User) Value() (driver.Value, error) {
 var db *sqlx.DB
 
 func initDb() (err error) {
-	dsn := "homestead:secret@(192.168.10.10)/homestead?charset=utf8mb4"
+	//dsn := "homestead:secret@(192.168.10.10)/homestead?charset=utf8mb4"
+	dsn := "root:root@(127.0.0.1)/homestead?charset=utf8mb4"
 	db, err = sqlx.Connect("mysql", dsn)
 	if err != nil {
 		return
@@ -139,8 +140,16 @@ func transactionSql() {
 }
 
 func batchInsert(sql string, u []interface{}) {
-	str, args, _ := sqlx.In(sql, u)
-	r, _ := db.Exec(str, args)
+	str, args, _ := sqlx.In(sql, u...)
+	fmt.Println(sql, u, args)
+	//return
+	r, _ := db.Exec(str, args...)
+	fmt.Println(r.RowsAffected())
+}
+
+func batchInsertByNamed(u []interface{}) {
+	sql := "INSERT INTO `user`(`name`,`age`) VALUES (:name, :age)"
+	r, _ := db.NamedExec(sql, u)
 	fmt.Println(r.RowsAffected())
 }
 func main() {
@@ -172,12 +181,22 @@ func main() {
 	//execBySearch(sql, search)
 
 	//transactionSql()
+	//u := make([]interface{}, 0)
+	//sql := "INSERT INTO `user`(`name`,`age`) VALUES ";
+	//for i := 1; i <= 10; i++ {
+	//	name := fmt.Sprintf("N%d", i)
+	//	u = append(u, &User{ Age: i, Name: name})
+	//	sql += " (?), "
+	//}
+	// sql = strings.TrimRight(sql, ", ")
+	// fmt.Println(sql)
+	//batchInsert(sql, u)
+
 	u := make([]interface{}, 0)
 	for i := 1; i <= 10; i++ {
-		name := fmt.Sprintf("N%d", i)
-		u = append(u, User{Age: i, Name: name})
+		name := fmt.Sprintf("Q%d", i)
+		u = append(u, &User{Age: i, Name: name})
 	}
-	sql := "INSERT INTO `user`(`name`,`age`) VALUES (?,?)"
-	batchInsert(sql, u)
+	batchInsertByNamed(u)
 
 }

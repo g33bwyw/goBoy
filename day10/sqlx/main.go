@@ -20,8 +20,8 @@ func (u User) Value() (driver.Value, error) {
 var db *sqlx.DB
 
 func initDb() (err error) {
-	//dsn := "homestead:secret@(192.168.10.10)/homestead?charset=utf8mb4"
-	dsn := "root:root@(127.0.0.1)/homestead?charset=utf8mb4"
+	dsn := "homestead:secret@(192.168.10.10)/homestead?charset=utf8mb4"
+	//dsn := "root:root@(127.0.0.1)/homestead?charset=utf8mb4"
 	db, err = sqlx.Connect("mysql", dsn)
 	if err != nil {
 		return
@@ -152,6 +152,17 @@ func batchInsertByNamed(u []interface{}) {
 	r, _ := db.NamedExec(sql, u)
 	fmt.Println(r.RowsAffected())
 }
+
+//根据in查询
+func queryByIn(ids []int) (user []User, err error) {
+	sql := "SELECT * FROM user WHERE id IN (?)"
+	query, args, err := sqlx.In(sql, ids)
+	query = db.Rebind(query)
+	fmt.Println("批量查询sql", query)
+	db.Select(&user, query, args...)
+	return
+}
+
 func main() {
 	err := initDb()
 	if err != nil {
@@ -192,11 +203,15 @@ func main() {
 	// fmt.Println(sql)
 	//batchInsert(sql, u)
 
-	u := make([]interface{}, 0)
-	for i := 1; i <= 10; i++ {
-		name := fmt.Sprintf("Q%d", i)
-		u = append(u, &User{Age: i, Name: name})
-	}
-	batchInsertByNamed(u)
+	//u := make([]interface{}, 0)
+	//for i := 1; i <= 10; i++ {
+	//	name := fmt.Sprintf("Q%d", i)
+	//	u = append(u, &User{Age: i, Name: name})
+	//}
+	//batchInsertByNamed(u)
+
+	ids := []int{3, 4}
+	user, _ := queryByIn(ids)
+	fmt.Println(user)
 
 }
